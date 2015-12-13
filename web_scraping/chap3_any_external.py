@@ -1,0 +1,66 @@
+__author__ = 'charlesw'
+
+
+# for python 3
+# from urllib.request import urlopen
+#from urllib.error import HTTPError
+
+from urllib2 import urlopen
+from urllib2 import HTTPError
+from bs4 import BeautifulSoup
+
+import re
+import datetime
+import random
+pages = set()
+random.seed(datetime.datetime.now())
+#Retrieves a list of all Internal links found on a page
+def getInternalLinks(bsObj, includeUrl):
+    internalLinks = []
+    #Finds all links that begin with a "/"
+    for link in bsObj.findAll("a", href=re.compile("^(/|.*"+includeUrl+")")):
+        if link.attrs['href'] is not None:
+            if link.attrs['href'] not in internalLinks:
+                internalLinks.append(link.attrs['href'])
+    return internalLinks
+
+#Retrieves a list of all external links found on a page
+def getExternalLinks(bsObj, excludeUrl):
+    externalLinks = []
+    #Finds all links that start with "http" or "www" that do
+    #not contain the current URL
+    for link in bsObj.findAll("a",href=re.compile("^(http|www)((?!"+excludeUrl+").)*$")):
+            if link.attrs['href'] is not None:
+                if link.attrs['href'] not in externalLinks:
+                    externalLinks.append(link.attrs['href'])
+    return externalLinks
+
+def splitAddress(address):
+    addressParts = address.replace("http://", "").split("/")
+    return addressParts
+
+def getRandomExternalLink(startingPage):
+    global parentPage
+    try:
+        html = urlopen(startingPage)
+    except HTTPError as e:
+        print ("Error to open {0} -- error {1}".format(startingPage, e))
+        return parentPage
+    bsObj = BeautifulSoup(html, "html.parser")
+    externalLinks = getExternalLinks(bsObj, splitAddress(startingPage)[0])
+    parentPage = startingPage
+    if len(externalLinks) == 0:
+        internalLinks = getInternalLinks(bsObj,"")
+        parentPage = startingPage
+        return getRandomExternalLink(internalLinks[random.randint(0,len(internalLinks)-1)])
+    else:
+        return externalLinks[random.randint(0, len(externalLinks)-1)]
+
+def followExternalOnly(startingSite):
+    externalLink = getRandomExternalLink(startingSite)
+    print("Random external link is: "+externalLink)
+    followExternalOnly(externalLink)
+
+
+parentPage = ""
+followExternalOnly("https://www.melbourneit.com.au")
