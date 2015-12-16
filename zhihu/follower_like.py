@@ -9,6 +9,14 @@ import urllib2
 import requests,cookielib
 import json
 import pickle
+from zhihu import Question
+
+url = "https://www.zhihu.com/question/24269892"
+question = Question(url)
+answers = question.get_all_answers()
+for answer in answers:
+    answer.to_txt()
+    answer.to_md()
 
 def save_obj(obj, name ):
     with open('obj/'+ name + '.pkl', 'w+b') as f:
@@ -43,7 +51,7 @@ save_cookies_lwp(cj,"lwpcookie")
 url = 'https://www.zhihu.com/settings/profile'
 
 #requests = requests.Session()
-requests.cookies = cookielib.LWPCookieJar('cookies')
+requests.cookies = cookielib.LWPCookieJar('lwpcookie')
 
 #r = requests.get(url, cookies=cj)
 #print type(r)

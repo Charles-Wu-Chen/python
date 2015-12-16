@@ -165,8 +165,8 @@ def upload_form(form):
 
 def islogin():
     # check session
-    url = "http://www.zhihu.com/settings/profile"
-
+    url = "https://www.zhihu.com/settings/profile"
+    print requests.cookies
     r = requests.get(url, allow_redirects=False)
     status_code = int(r.status_code)
     print (status_code)

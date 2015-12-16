@@ -98,7 +98,8 @@ class Question:
 
     def __init__(self, url, title=None):
 
-        if url[0:len(url) - 8] != "http://www.zhihu.com/question/":
+        #if url[0:len(url) - 8] != "http://www.zhihu.com/question/":
+        if url.startswith('www.zhihu.com/question', url.index('//')+2) == False:
             raise ValueError("\"" + url + "\"" + " : it isn't a question url.")
         else:
             self.url = url
@@ -195,10 +196,11 @@ class Question:
                             continue
                         author = None
                         #change wrap to info
-                        print soup.find_all("div", class_="zm-item-answer-author-info")
-                        print len(soup.find_all("div", class_="zm-item-answer-author-info"))
+                        #print soup.find_all("div", class_="zm-item-answer-author-info")[j]
+                        #print len(soup.find_all("div", class_="zm-item-answer-author-info"))
                         print j
-                        if soup.find_all("div", class_="zm-item-answer-author-info")[j].string == u"匿名用户":
+                        #print soup.find_all("div", class_="zm-item-answer-author-info")[j].find("", text = u"匿名用户")
+                        if soup.find_all("div", class_="zm-item-answer-author-info")[j].find("", text = u"匿名用户") is not None:
                             author_url = None
                             author = User(author_url)
                         else:
@@ -264,7 +266,7 @@ class Question:
                             continue
                         
                         author = None
-                        if answer_soup.find("div", class_="zm-item-answer-author-info").string == u"匿名用户":
+                        if answer_soup.find("", text = u"匿名用户") is not None:
                             author_url = None
                             author = User(author_url)
                         else:
