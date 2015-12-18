@@ -569,6 +569,7 @@ class User:
             yield
         else:
             answers_num = self.get_answers_num()
+            print answers_num
             if answers_num == 0:
                 return
                 yield
@@ -666,7 +667,8 @@ class Answer:
             if self.soup == None:
                 self.parser()
             soup = self.soup
-            count = soup.find("span", class_="count").string
+            print soup.find("div", class_="zm-item-vote").find("a").string
+            count = soup.find("div", class_="zm-item-vote").find("a").string
             if count[-1] == "K":
                 upvote = int(count[0:(len(count) - 1)]) * 1000
             elif count[-1] == "W":
@@ -747,7 +749,9 @@ class Answer:
             # file_name = file_name.decode('utf-8').encode('gbk')
             # print file_name
             # else:
-            # print file_name
+            #print file_name
+            file_name = "".join((x for x in file_name if x not in "\/:*?<>|"))
+            print file_name
             f = open(os.path.join(os.path.join(os.getcwd(), "text"), file_name), "wt")
             f.write(self.get_question().get_title() + "\n\n")
         if platform.system() == 'Windows':
@@ -815,7 +819,9 @@ class Answer:
             # file_name = file_name.decode('utf-8').encode('gbk')
             # print file_name
             # else:
-            # print file_name
+            file_name = "".join((x for x in file_name if x not in "\/:*?<>|"))
+            print file_name
+
             f = open(os.path.join(os.path.join(os.getcwd(), "markdown"), file_name), "wt")
             f.write("# " + self.get_question().get_title() + "\n")
         if platform.system() == 'Windows':

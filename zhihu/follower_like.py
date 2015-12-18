@@ -11,12 +11,24 @@ import json
 import pickle
 from zhihu import Question
 
-url = "https://www.zhihu.com/question/24269892"
-question = Question(url)
-answers = question.get_all_answers()
+
+from zhihu import User
+
+user_url = "http://www.zhihu.com/people/wu.chen"
+user = User(user_url)
+answers = user.get_answers()
+
 for answer in answers:
     answer.to_txt()
     answer.to_md()
+
+#
+#url = "https://www.zhihu.com/question/24269892"
+#question = Question(url)
+#answers = question.get_all_answers()
+#for answer in answers:
+#    answer.to_txt()
+#    answer.to_md()
 
 def save_obj(obj, name ):
     with open('obj/'+ name + '.pkl', 'w+b') as f:
